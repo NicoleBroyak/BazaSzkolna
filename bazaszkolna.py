@@ -22,6 +22,39 @@ class Student:
         self.class_no = input('class: ')
         while not self.class_no:
             self.class_no = input('Type correct class:')
+        self.title = "Student"
+
+    def database_add(self):
+        students_list.append({'firstname': self.firstname
+                            ,'lastname': self.lastname
+                            ,'id': self.id
+                            ,'class': self.class_no
+                            ,'title': "Student"})
+        class_list.add(self.class_no)
+
+    def class_command_print():
+        print('Students:')
+        for stud in students_list:
+            if stud['class'] == command:
+                f = stud['firstname']
+                l = stud['lastname']
+                i = stud['id']
+                print(f'{f} {l} ID: {i}')
+
+    def stud_command_print():
+        for stud in students_list:
+            studname = stud['firstname'] + ' ' + stud['lastname']
+            id = stud['id']
+            studclass = stud['class']
+            if command == studname or command == id:
+                print(f'\nMentors of student [{studname} ID: {id}]')
+                for ment in mentors_list:
+                    for classes in ment['classes']:
+                        if classes == studclass:
+                            mentname = ment['firstname'] + " " + ment['lastname']
+                            id = ment['id']
+                            subject = ment['subject']
+                            print(f'{mentname} ID: {id}, subject: {subject}')
 
 
 class Mentor:
@@ -45,6 +78,34 @@ class Mentor:
         while class_input:
             self.classes.append(class_input)
             class_input = input('Another class [submit empty line to abort]:')
+        self.title = "Mentor"
+
+    def database_add(self):
+        mentors_list.append({'firstname': self.firstname
+                            ,'lastname': self.lastname
+                            ,'id': self.id
+                            ,'subject': self.subject
+                            ,'classes': self.classes
+                            ,'title': "Mentor"})
+        for classes in self.classes:
+            class_list.add(classes)
+
+    def ment_command_print():
+        for ment in mentors_list:
+            mentname = ment['firstname'] + " " + ment['lastname']
+            id = ment['id']
+            mentclasses = ment['classes']
+            if command == mentname or command == id:
+                print(f'\nSupervisors of classes which mentor '
+                    f'[{mentname} ID: {id}] has lessons with:')
+                for classes in mentclasses:
+                    for superv in supervisors_list:
+                        for classes_s in superv['classes']:
+                            if classes == classes_s:
+                                print(superv['firstname'] + ' ' 
+                                    + superv['lastname'] + ' ID: '
+                                    + superv['id'] + "class: "
+                                    + classes_s)
 
 
 class Supervisor:
@@ -66,117 +127,93 @@ class Supervisor:
             self.classes.append(class_input)
             class_input = input('Another class [submit empty line to abort]:')
 
-print(f'bazaszkolna.py instruction:')
-print(f'Allowed user types: {ALLOWED_USER_TYPES}')
-user_type = input('User type:')
-while user_type not in ALLOWED_USER_TYPES:
+    def database_add(self):
+        supervisors_list.append({'firstname': self.firstname
+                            ,'lastname': self.lastname
+                            ,'id': self.id
+                            ,'classes': self.classes
+                            , 'title': "Supervisor"})
+        for classes in self.classes:
+            class_list.add(classes)
+
+    def class_command_print():
+        print('Supervisors:')
+        for superv in supervisors_list:
+            for classes in superv['classes']:
+                if classes == command:
+                    f = superv['firstname']
+                    l = superv['lastname']
+                    i = superv['id']
+                    print(f'{f} {l} ID: {i}')
+
+    def superv_command_print():
+        for superv in supervisors_list:
+            supervname = superv['firstname'] + ' ' + superv['lastname']
+            id = superv['id']
+            if command == supervname or command == id:
+                print(f'\nStudents of supervisor: {supervname} ID: {id}')
+                for stud in students_list:
+                    if stud['class'] in superv['classes']:
+                        f = stud['firstname']
+                        l = stud['lastname']
+                        i = stud['id']
+                        print(f'{f} {l} ID: {i}')
+
+
+def list_of_users(type_list):
+    for user_type in type_list:
+        name = user_type['firstname'] + ' ' + user_type['lastname']
+        title_and_name = user_type['title'] + ": " + name
+        id = user_type['id']
+        print(title_and_name + ', ID: ' + id)
+
+def allowed_commands_print():
+    print('Allowed commands:')
+    print('[NAME OF STUDENT]: shows student\' subjects and mentors')
+    print('[NAME OF CLASS]: shows class\' supervisor and students')
+    print('[NAME OF SUPERVISOR]: shows supervisor\'s students')
+    print('[NAME OF MENTOR]: shows supervisors whose classes have lessons with'
+          ' mentor')
+    print('Available users(if exact names, enter user ID instead of name)')
+
+def user_input():
+    print(f'Allowed user types: {ALLOWED_USER_TYPES}')
     user_type = input('User type:')
+    while user_type not in ALLOWED_USER_TYPES:
+        print(f'Allowed user types: {ALLOWED_USER_TYPES}')
+        user_type = input('Correct user type:')
+    print("")
+    return user_type
+
+
+user_type = user_input()
 while user_type in ALLOWED_USER_TYPES:
     if user_type == ALLOWED_USER_TYPES[0]:
         stud = Student()
-        students_list.append({'firstname': stud.firstname
-                            ,'lastname': stud.lastname
-                            ,'id': stud.id
-                            ,'class': stud.class_no})
-        class_list.add(stud.class_no)
+        stud.database_add()
     elif user_type == ALLOWED_USER_TYPES[1]:
         ment = Mentor()
-        mentors_list.append({'firstname': ment.firstname
-                            ,'lastname': ment.lastname
-                            ,'id': ment.id
-                            ,'subject': ment.subject
-                            ,'classes': ment.classes})
-        for classes in ment.classes:
-            class_list.add(classes)
+        ment.database_add()
     elif user_type == ALLOWED_USER_TYPES[2]:
         superv = Supervisor()
-        supervisors_list.append({'firstname': superv.firstname
-                            ,'lastname': superv.lastname
-                            ,'id': superv.id
-                            ,'classes': superv.classes})
-        for classes in superv.classes:
-            class_list.add(classes)
+        superv.database_add()
     elif user_type == ALLOWED_USER_TYPES[3]:
         break
-    user_type = input('User type:')
-    while user_type not in ALLOWED_USER_TYPES:
-        user_type = input('User type:')
-print('Allowed commands:')
-print('[NAME OF STUDENT]: shows student\' subjects and mentors')
-print('[NAME OF CLASS]: shows class\' supervisor and students')
-print('[NAME OF SUPERVISOR]: shows supervisor\'s students')
-print('[NAME OF MENTOR]: shows supervisors whose classes have lessons with'
-      ' mentor')
-print('Available users(if exact names, enter user ID instead of name)')
-for ment in mentors_list:
-    name = 'Mentor: ' + ment['firstname'] + ' ' + ment['lastname']
-    id = ment['id']
-    print(name + ', ID: ' + id)
-for stud in students_list:
-    name = 'Student: ' + stud['firstname'] + ' ' + stud['lastname']
-    id = stud['id']
-    print(name + ', ID: ' + id)
-for superv in supervisors_list:
-    name = 'Supervisor: ' + superv['firstname'] + ' ' + superv['lastname']
-    id = superv['id']
-    print(name + ', ID: ' + id)
-command = input('Type command: ')
-if command in class_list:
-    print(f'class: {command}')
-    print('Supervisors:')
-    for superv in supervisors_list:
-        for classes in superv['classes']:
-            if classes == command:
-                f = superv['firstname']
-                l = superv['lastname']
-                i = superv['id']
-                print(f'{f} {l} ID: {i}')
-    print('Students:')
-    for stud in students_list:
-        if stud['class'] == command:
-            f = stud['firstname']
-            l = stud['lastname']
-            i = stud['id']
-            print(f'{f} {l} ID: {i}')
-else:
-    for superv in supervisors_list:
-        supervname = superv['firstname'] + ' ' + superv['lastname']
-        id = superv['id']
-        if command == supervname or command == id:
-            print(f'\nStudents of supervisor: {supervname} ID: {id}\n')
-            for stud in students_list:
-                if stud['class'] in superv['classes']:
-                    f = stud['firstname']
-                    l = stud['lastname']
-                    i = stud['id']
-                    print(f'{f} {l} ID: {i}')
-    for ment in mentors_list:
-        mentname = ment['firstname'] + " " + ment['lastname']
-        id = ment['id']
-        mentclasses = ment['classes']
-        if command == mentname or command == id:
-            print(f'Supervisors of classes which mentor '
-                  f'[{mentname} ID: {id}] has lessons with:')
-            for classes in mentclasses:
-                for superv in supervisors_list:
-                    for classes_s in superv['classes']:
-                        if classes == classes_s:
-                            print(superv['firstname'] + ' ' 
-                                 + superv['lastname'] + ' ID: '
-                                 + superv['id'] + ", classes: "
-                                 + superv['classes'])
-    for stud in students_list:
-        studname = stud['firstname'] + ' ' + stud['lastname']
-        id = stud['id']
-        studclass = stud['class']
-        if command == studname or command == id:
-            print(f'Mentors of student [{studname} ID: {id}]')
-            for ment in mentors_list:
-                for classes in ment['classes']:
-                    if classes == studclass:
-                        mentname = ment['firstname'] + " " + ment['lastname']
-                        id = ment['id']
-                        subject = ment['subject']
-                        print(f'{mentname} ID: {id}, subject: {subject}')
+    user_type = user_input()
+allowed_commands_print()
+list_of_users(mentors_list)
+list_of_users(students_list)
+list_of_users(supervisors_list)
+command = input('\nType command (enter empty line to abort): ')
+print("")
+while command:
+    if command in class_list:
+        Supervisor.class_command_print()
+        Student.class_command_print()
+    else:
+        Supervisor.superv_command_print()
+        Mentor.ment_command_print()
+        Student.stud_command_print()
+    command = input('\nType command (enter empty line to abort): ')
+    print("")
                         
-
