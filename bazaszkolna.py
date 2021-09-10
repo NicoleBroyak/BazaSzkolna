@@ -1,3 +1,5 @@
+from importyyyy import ALLOWED_USER_TYPES
+
 students_list = list()
 student_info_temp = dict()
 mentors_list = list()
@@ -5,8 +7,7 @@ mentor_info_temp = dict()
 supervisors_list = list()
 supervisor_info_temp = dict()
 class_list = set()
-ALLOWED_USER_TYPES = ('student', 'mentor', 'supervisor', 'end')
-
+ALLOWED_COMMANDS = ('add', 'delete', 'books', 'stop')
 
 class Student:
     def __init__(self):
